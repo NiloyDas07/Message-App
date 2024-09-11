@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-import { IMessage, messageSchema } from "./Message.model";
+import { MessageInterface, messageSchema } from "./Message.model";
 
-export interface IUser extends Document {
+export interface UserInterface extends Document {
   username: string;
   email: string;
   password: string;
@@ -10,10 +10,10 @@ export interface IUser extends Document {
   verifiCodeExpiryDate: Date;
   isVerified: boolean;
   isAcceptingMessages: boolean;
-  message: IMessage[];
+  message: MessageInterface[];
 }
 
-export const userSchema: Schema<IUser> = new Schema({
+export const userSchema: Schema<UserInterface> = new Schema({
   username: {
     type: String,
     required: [true, "Username is required"],
@@ -55,7 +55,7 @@ export const userSchema: Schema<IUser> = new Schema({
 });
 
 const User =
-  (mongoose.models.User as mongoose.Model<IUser>) ||
-  mongoose.model<IUser>("User", userSchema);
+  (mongoose.models.User as mongoose.Model<UserInterface>) ||
+  mongoose.model<UserInterface>("User", userSchema);
 
 export default User;
