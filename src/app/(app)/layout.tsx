@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import "./globals.css";
-
 import localFont from "next/font/local";
-import AuthProvider from "@/context/AuthProvider";
-
-import { Toaster } from "@/components/ui/toaster";
 
 import Navbar from "@/components/Navbar";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "../fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -30,17 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <AuthProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-
-          {/* Toaster for errors and other notifications. */}
-          <Toaster />
-        </body>
-      </AuthProvider>
-    </html>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      {children}
+    </div>
   );
 }

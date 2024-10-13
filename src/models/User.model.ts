@@ -7,10 +7,10 @@ export interface UserInterface extends Document {
   email: string;
   password: string;
   verifyCode: string;
-  verifiCodeExpiryDate: Date;
+  verifyCodeExpiryDate: Date;
   isVerified: boolean;
   isAcceptingMessages: boolean;
-  message: MessageInterface[];
+  messages: MessageInterface[];
 }
 
 export const userSchema: Schema<UserInterface> = new Schema({
@@ -37,7 +37,7 @@ export const userSchema: Schema<UserInterface> = new Schema({
     type: String,
     required: [true, "Verification code is required"],
   },
-  verifiCodeExpiryDate: {
+  verifyCodeExpiryDate: {
     type: Date,
     required: [true, "Verification code expiry date is required"],
   },
@@ -51,11 +51,10 @@ export const userSchema: Schema<UserInterface> = new Schema({
     default: true,
     required: true,
   },
-  message: [messageSchema],
+  messages: [messageSchema],
 });
 
 const User =
-  (mongoose.models.User as mongoose.Model<UserInterface>) ||
-  mongoose.model<UserInterface>("User", userSchema);
+  mongoose.models?.User || mongoose.model<UserInterface>("User", userSchema);
 
 export default User;
