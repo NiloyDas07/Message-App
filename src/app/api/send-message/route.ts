@@ -1,20 +1,32 @@
 import { auth } from "@/auth";
 
-import { User } from "next-auth";
-
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
-import Message from "@/models/Message.model";
 
 export const POST = async (req: Request): Promise<Response> => {
   // Connect to db.
   await dbConnect();
 
-  const { usename, content } = await req.json();
+  const session = await auth();
+
+  // If user is not authenticated.
+  if (!session || !session.user) {
+    return Response.json(
+      {
+        success: false,
+        message: "Unauthorized",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const { username, content } = await req.json();
 
   try {
     // Find the user.
-    const user = await UserModel.findOne({ username: usename });
+    const user = await UserModel.findOne({ username });
 
     // If user not found.
     if (!user) {
