@@ -28,6 +28,8 @@ import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { User } from "next-auth";
 
 // Separator used to separate messages fetched by suggest-messages.
 const messagesSeparator = "||";
@@ -42,6 +44,8 @@ const initialMessageString =
   "What's your favorite movie?||Do you have any pets?||What's your dream job?";
 
 const SendMessage = () => {
+  const { data: session } = useSession();
+
   const { toast } = useToast();
 
   // Get username from params.
@@ -129,12 +133,18 @@ const SendMessage = () => {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponseInterface>;
 
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description:
-          axiosError.response?.data?.message || "Failed to send message.",
-      });
+      if (axiosError.response?.status === 401) {
+        toast({
+          description: "Please sign in to send messages.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            axiosError.response?.data?.message || "Failed to send message.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +173,7 @@ const SendMessage = () => {
     <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
       {/* Heading */}
       <h1 className="text-4xl font-bold mb-6 text-center">
-        Public Profile Link
+        Send Anonymous Messages to @{username}
       </h1>
 
       {/* Form - Send Message */}
@@ -174,7 +184,7 @@ const SendMessage = () => {
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Send Anonymous Message to @{username}</FormLabel>
+                <FormLabel className="sr-only">Enter the message.</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Write your anonymous message here"
@@ -239,14 +249,18 @@ const SendMessage = () => {
         </Card>
       </div>
 
-      <Separator className="my-6" />
+      {!session && (
+        <>
+          <Separator className="my-6" />
 
-      <div className="text-center">
-        <div className="mb-4">Get Your Message Board</div>
-        <Link href={"/sign-up"}>
-          <Button>Create Your Account</Button>
-        </Link>
-      </div>
+          <div className="text-center">
+            <div className="mb-4">Get Your Message Board</div>
+            <Link href={"/sign-up"}>
+              <Button>Create Your Account</Button>
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 };

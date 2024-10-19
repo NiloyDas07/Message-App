@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 
 import dbConnect from "@/lib/dbConnect";
-import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+// import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+import { sendVerificationEmail } from "@/helpers/sendVerificationEmailNodemailer";
 
 import User from "@/models/User.model";
 import { ApiResponseInterface } from "@/types/apiResponse";

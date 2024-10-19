@@ -14,7 +14,7 @@ export const POST = async (req: Request): Promise<Response> => {
     return Response.json(
       {
         success: false,
-        message: "Unauthorized",
+        message: "Please Sign In to send message.",
       },
       {
         status: 401,

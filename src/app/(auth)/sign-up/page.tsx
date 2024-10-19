@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useDebounceCallback, useDebounceValue } from "usehooks-ts";
+import { useDebounceCallback } from "usehooks-ts";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,6 @@ import { ApiResponseInterface } from "@/types/apiResponse";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,8 +23,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, MoveLeft } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const page = () => {
   const [username, setUsername] = useState("");
@@ -121,111 +121,137 @@ const page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-svh bg-gray-100 py-4">
-      <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Join Messaging App
-          </h1>
-          <p className="mb-4">Sign Up to start your anonymous adventure.</p>
-        </div>
+    <>
+      <ThemeToggle className="fixed top-4 right-4" />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
-          >
-            {/* Username Field */}
-            <FormField
-              name="username"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Username"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        debounced(e.target.value);
-                      }}
-                    />
-                  </FormControl>
+      <div className="flex justify-center items-center min-h-svh bg-muted-background p-2 sm:py-4">
+        <div className="w-full max-w-md space-y-8 p-8 bg-background rounded-lg shadow-md">
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+              Join Messaging App
+            </h1>
+            <p className="mb-4">
+              Sign Up to start connecting with your friends and family.
+            </p>
+          </div>
 
-                  {isCheckingUsername && (
-                    <Loader2
-                      className="animate-spin ml-2 h-4 w-4"
-                      aria-label="Loading username..."
-                    />
-                  )}
-                  <p
-                    className={`text-sm ${
-                      usernameMessage === "Username is available"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {usernameMessage.length > 0 && usernameMessage}
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
+              {/* Username Field */}
+              <FormField
+                name="username"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Username"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          debounced(e.target.value);
+                        }}
+                      />
+                    </FormControl>
 
-            {/* Email Field */}
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="john@doe.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    {isCheckingUsername && (
+                      <Loader2
+                        className="animate-spin ml-2 h-4 w-4"
+                        aria-label="Loading username..."
+                      />
+                    )}
+                    <p
+                      className={`text-sm ${
+                        usernameMessage === "Username is available"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {usernameMessage.length > 0 && usernameMessage}
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Password Field */}
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              {/* Email Field */}
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="john@doe.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Submit Button */}
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing Up
-                </>
-              ) : (
-                "Sign Up"
-              )}
-            </Button>
-          </form>
-        </Form>
+              {/* Password Field */}
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div className="text-center mt-4">
-          <p>
-            Already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
-              Sign In
+              {/* Submit Button */}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing Up
+                  </>
+                ) : (
+                  "Sign Up"
+                )}
+              </Button>
+            </form>
+          </Form>
+
+          <div className="text-center mt-4">
+            <p>
+              Already a member?{" "}
+              <Link
+                href="/sign-in"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Sign In
+              </Link>
+            </p>
+
+            {/* Back to Home Link */}
+            <Link
+              href="/"
+              className="text-blue-600 hover:text-blue-800 flex text-center justify-center gap-3"
+            >
+              <MoveLeft></MoveLeft>
+              <span>Back to Home</span>
             </Link>
-          </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

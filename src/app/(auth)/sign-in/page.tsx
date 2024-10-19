@@ -8,8 +8,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useToast } from "@/hooks/use-toast";
-
-import { ApiResponseInterface } from "@/types/apiResponse";
 import {
   Form,
   FormControl,
@@ -20,10 +18,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { signInSchema } from "@/schemas/signIn.schema";
 import { signIn } from "next-auth/react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +41,7 @@ const page = () => {
     },
   });
 
+  // Function to handle form submission.
   const handleSubmit = async (data: z.infer<typeof signInSchema>) => {
     setIsSubmitting(() => true);
     const response = await signIn("credentials", {
@@ -67,80 +67,103 @@ const page = () => {
     }
 
     if (response?.url) {
-      router.replace("/dashboard");
+      router.back();
     }
 
     setIsSubmitting(() => false);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-svh bg-gray-100 py-4">
-      <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Join Messaging App
-          </h1>
-          <p className="mb-4">Sign in to start your anonymous adventure.</p>
-        </div>
+    <>
+      <ThemeToggle className="fixed top-4 right-4" />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
-          >
-            {/* Username Field */}
-            <FormField
-              name="identifier"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username / Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Username / Email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div className="flex justify-center items-center min-h-svh bg-muted-background py-4">
+        <div className="w-full max-w-md space-y-8 p-8 bg-background rounded-lg shadow-md">
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+              Join Messaging App
+            </h1>
+            <p className="mb-4">
+              Sign In to start connecting with your friends and family.
+            </p>
+          </div>
 
-            {/* Password Field */}
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
+              {/* Username Field */}
+              <FormField
+                name="identifier"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username / Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Username / Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Submit Button */}
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing Up
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </form>
-        </Form>
+              {/* Password Field */}
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div className="text-center mt-4">
-          <p>
-            Not a member?{" "}
-            <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
-              Sign Up
+              {/* Submit Button */}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing Up
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
+          </Form>
+
+          <div className="text-center mt-4">
+            {/* Sign Up Link */}
+            <p>
+              Not a member?{" "}
+              <Link
+                href="/sign-up"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Sign Up
+              </Link>
+            </p>
+
+            {/* Back to Home Link */}
+            <Link
+              href="/"
+              className="text-blue-600 hover:text-blue-800 flex text-center justify-center gap-3"
+            >
+              <MoveLeft></MoveLeft>
+              <span>Back to Home</span>
             </Link>
-          </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

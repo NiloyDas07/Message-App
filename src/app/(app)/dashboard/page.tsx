@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
+import { redirect } from "next/navigation";
 
 const page = () => {
   const [messages, setMessages] = useState<MessageInterface[]>([]);
@@ -106,7 +107,9 @@ const page = () => {
   // Fetch messages and settings on page load.
   useEffect(() => {
     // If user is not logged in.
-    if (!session || !session.user) return;
+    if (!session || !session.user) {
+      redirect("/sign-in");
+    }
 
     fetchMessages();
     fetchIsAcceptingMessages();
@@ -164,7 +167,7 @@ const page = () => {
   };
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
+    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 rounded w-full max-w-6xl">
       {/* Heading */}
       <h1 className="text-4xl font-bold mb-4">Dashboard</h1>
 
