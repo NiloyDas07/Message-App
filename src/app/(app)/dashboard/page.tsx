@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { MessageInterface } from "@/models/Message.model";
 import { useToast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -10,21 +9,28 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { acceptMessageSchema } from "@/schemas/acceptMessage.schema";
 import axios, { AxiosError } from "axios";
-import { set } from "mongoose";
 import { ApiResponseInterface } from "@/types/apiResponse";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+type Message = {
+  _id: string;
+  content: string;
+  sender: string;
+  createdAt: Date;
+};
 
 const page = () => {
-  const [messages, setMessages] = useState<MessageInterface[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
+  const router = useRouter();
   const { toast } = useToast();
 
   // Function to delete message from the state.
@@ -79,7 +85,7 @@ const page = () => {
           "/api/get-messages"
         );
 
-        setMessages(response.data?.messages || []);
+        setMessages((response.data?.messages as unknown as Message[]) || []);
 
         if (refresh) {
           toast({
@@ -108,7 +114,7 @@ const page = () => {
   useEffect(() => {
     // If user is not logged in.
     if (!session || !session.user) {
-      redirect("/sign-in");
+      router.replace("/sign-in");
     }
 
     fetchMessages();
@@ -203,6 +209,7 @@ const page = () => {
 
       <Separator />
 
+      {/* Refresh messages button */}
       <Button
         className="mt-4"
         variant="outline"
@@ -218,6 +225,7 @@ const page = () => {
         )}
       </Button>
 
+      {/* Messages */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         {messages.length > 0 ? (
           messages.map((message, index) => (

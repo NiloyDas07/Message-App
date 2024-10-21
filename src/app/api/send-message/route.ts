@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
+import MessageModel from "@/models/Message.model";
+import mongoose from "mongoose";
 
 export const POST = async (req: Request): Promise<Response> => {
   // Connect to db.
@@ -10,7 +12,7 @@ export const POST = async (req: Request): Promise<Response> => {
   const session = await auth();
 
   // If user is not authenticated.
-  if (!session || !session.user) {
+  if (!session || !session.user || !session.user._id) {
     return Response.json(
       {
         success: false,
@@ -22,14 +24,19 @@ export const POST = async (req: Request): Promise<Response> => {
     );
   }
 
+  // Sender Id is the current user.
+  const senderId = new mongoose.Types.ObjectId(session.user._id);
+
   const { username, content } = await req.json();
 
   try {
-    // Find the user.
-    const user = await UserModel.findOne({ username });
+    // Find the reciever.
+    const reciever = await UserModel.findOne({ username }).select(
+      "_id isAcceptingMessages"
+    );
 
-    // If user not found.
-    if (!user) {
+    // If reciever not found.
+    if (!reciever) {
       return Response.json(
         {
           success: false,
@@ -40,7 +47,7 @@ export const POST = async (req: Request): Promise<Response> => {
     }
 
     // If user is not accepting messages.
-    if (!user.isAcceptingMessages) {
+    if (!reciever.isAcceptingMessages) {
       return Response.json(
         {
           success: false,
@@ -50,12 +57,17 @@ export const POST = async (req: Request): Promise<Response> => {
       );
     }
 
+    console.log("reciever: ", reciever);
+
     // Create new message.
-    const newMessage = { content };
+    const newMessage = { senderId, receiverId: reciever._id, content };
+
+    console.log("newMessage: ", newMessage);
 
     // Save message.
-    user.messages.push(newMessage);
-    await user.save();
+    const response = await MessageModel.create(newMessage);
+
+    console.log("Message sent:", response);
 
     // Return success response.
     return Response.json(

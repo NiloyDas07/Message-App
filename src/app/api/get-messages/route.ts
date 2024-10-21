@@ -7,7 +7,7 @@ import UserModel from "@/models/User.model";
 
 export const GET = async (req: Request): Promise<Response> => {
   // Connect to db.
-  dbConnect();
+  await dbConnect();
 
   const session = await auth();
 
@@ -30,21 +30,47 @@ export const GET = async (req: Request): Promise<Response> => {
   try {
     // Get all messages of the user.
     const user = await UserModel.aggregate([
-      { $match: { _id: userId } },
       {
-        $unwind: {
-          path: "$messages",
-          preserveNullAndEmptyArrays: true,
+        $match: {
+          _id: userId,
         },
       },
-      { $sort: { "messages.createdAt": -1 } },
       {
-        $group: {
-          _id: "$_id",
-          messages: { $push: "$messages" },
+        $lookup: {
+          from: "messages",
+          localField: "_id",
+          foreignField: "receiverId",
+          as: "messages",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "senderId",
+                foreignField: "_id",
+                as: "senderDetails",
+              },
+            },
+            {
+              $unwind: "$senderDetails",
+            },
+            {
+              $project: {
+                _id: 1,
+                content: 1,
+                createdAt: 1,
+                sender: "$senderDetails.username",
+              },
+            },
+          ],
         },
       },
-    ]); // TODO: Look at the aggregation pipeline again.
+      {
+        $project: {
+          messages: 1,
+          _id: 0,
+        },
+      },
+    ]);
 
     // If user not found.
     if (!user || user.length === 0) {

@@ -13,13 +13,14 @@ import Autoplay from "embla-carousel-autoplay";
 
 import carouselMessages from "@/data/messages.json";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   if (session) {
-    redirect("/dashboard");
+    router.replace("/dashboard");
   }
 
   return (

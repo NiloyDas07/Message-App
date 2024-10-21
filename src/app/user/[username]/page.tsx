@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useReducer, useState } from "react";
 import axios, { AxiosError } from "axios";
 
@@ -29,7 +29,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { User } from "next-auth";
 
 // Separator used to separate messages fetched by suggest-messages.
 const messagesSeparator = "||";
@@ -46,11 +45,46 @@ const initialMessageString =
 const SendMessage = () => {
   const { data: session } = useSession();
 
+  const router = useRouter();
+
   const { toast } = useToast();
 
   // Get username from params.
   const params = useParams<{ username: string }>();
   const username = params.username;
+
+  // Function to check if user exists and redirect to dashboard if not.
+  const checkUserExists = async () => {
+    try {
+      const user = await axios.get(`/api/get-user-by-username/`, {
+        params: { username },
+      });
+
+      if (!user || user.data.success === false) {
+        toast({
+          title: "User Not Found",
+          description: "User not found. Redirecting to home.",
+          variant: "destructive",
+        });
+        router.replace("/");
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 404) {
+          toast({
+            title: "User Not Found",
+            description: "User not found. Redirecting to home.",
+            variant: "destructive",
+          });
+          router.replace("/");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkUserExists();
+  }, [username]);
 
   // Latest suggested messages.
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
@@ -91,7 +125,7 @@ const SendMessage = () => {
     },
   });
 
-  // Load the first set of suggested messages on mount.
+  // Check if user exists and Load the first set of suggested messages on mount.
   useEffect(() => {
     complete("");
     const messages = parseStringMessages(completion);
@@ -170,15 +204,16 @@ const SendMessage = () => {
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
+    <div className="container mx-auto my-8 p-6 bg-background rounded max-w-4xl">
       {/* Heading */}
       <h1 className="text-4xl font-bold mb-6 text-center">
-        Send Anonymous Messages to @{username}
+        Send a message to <span className="text-blue-500">{username}</span>
       </h1>
 
       {/* Form - Send Message */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          {/* Textarea for the message */}
           <FormField
             control={form.control}
             name="content"
@@ -187,7 +222,7 @@ const SendMessage = () => {
                 <FormLabel className="sr-only">Enter the message.</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Write your anonymous message here"
+                    placeholder="Write your message here"
                     className="resize-none"
                     {...field}
                   />
@@ -197,6 +232,7 @@ const SendMessage = () => {
             )}
           />
 
+          {/* Send Button */}
           <div className="flex justify-center">
             {isLoading ? (
               <Button disabled>
@@ -215,6 +251,7 @@ const SendMessage = () => {
       {/* Suggested Messages */}
       <div className="space-y-4 my-8">
         <div className="space-y-2">
+          {/* Suggest Messages Button */}
           <Button
             onClick={fetchSuggestedMessages}
             className="my-4"
@@ -225,6 +262,7 @@ const SendMessage = () => {
           <p>Click on any message below to select it.</p>
         </div>
 
+        {/* Suggested Messages */}
         <Card>
           <CardHeader>
             <h3 className="text-xl font-semibold">Messages</h3>
@@ -238,7 +276,7 @@ const SendMessage = () => {
                 <Button
                   key={index}
                   variant="outline"
-                  className="mb-2 text-wrap py-7 h-fit"
+                  className="mb-2 text-wrap py-7 h-fit shadow"
                   onClick={() => handleMessageClick(message)}
                 >
                   {message}
@@ -249,6 +287,7 @@ const SendMessage = () => {
         </Card>
       </div>
 
+      {/* Create Account Button if user is not logged in */}
       {!session && (
         <>
           <Separator className="my-6" />

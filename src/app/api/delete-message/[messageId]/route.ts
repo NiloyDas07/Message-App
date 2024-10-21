@@ -3,7 +3,7 @@ import { User } from "next-auth";
 
 import dbConnect from "@/lib/dbConnect";
 
-import UserModel from "@/models/User.model";
+import MessageModel from "@/models/Message.model";
 
 export async function DELETE(
   request: Request,
@@ -29,22 +29,24 @@ export async function DELETE(
 
   const user: User = session.user;
 
+  console.log("messageId: ", messageId, "userId: ", user._id);
+
   try {
-    const updateResponse = await UserModel.updateOne(
-      { _id: user._id },
-      { $pull: { messages: { _id: messageId } } }
-    );
+    const deleteResponse = await MessageModel.findOneAndDelete({
+      _id: messageId,
+      receiverId: user._id,
+    });
+
+    console.log("deleteResponse: ", deleteResponse);
 
     // If message not found.
-    if (updateResponse.modifiedCount === 0) {
+    if (!deleteResponse) {
       return Response.json(
         {
           success: false,
           message: "Message not found or already deleted.",
         },
-        {
-          status: 404,
-        }
+        { status: 404 }
       );
     }
 
