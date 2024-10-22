@@ -15,8 +15,9 @@ const Navbar = () => {
   return (
     <nav className="p-4 md:p-6 shadow-md bg-background">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
-        <Link className="text-xl font-bold md:mb-0 " href="/">
-          Messaging App
+        <Link className="text-xl font-bold md:mb-0 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent" href="/">
+          <span className="italic ">Simple</span>
+          Chat
         </Link>
         <div className="flex items-center gap-2">
           {session ? (
