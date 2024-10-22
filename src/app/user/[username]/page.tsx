@@ -84,7 +84,7 @@ const SendMessage = () => {
 
   useEffect(() => {
     checkUserExists();
-  }, [username]);
+  }, [username, checkUserExists]);
 
   // Latest suggested messages.
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
@@ -125,12 +125,14 @@ const SendMessage = () => {
     },
   });
 
-  // Check if user exists and Load the first set of suggested messages on mount.
+  // Load the first set of suggested messages on mount.
   useEffect(() => {
     complete("");
     const messages = parseStringMessages(completion);
     setSuggestedMessages(messages);
     dispatchPreviousMessages({ type: "add", payload: messages });
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Form validation with Zod.

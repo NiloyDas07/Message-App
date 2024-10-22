@@ -79,7 +79,7 @@ export const POST = async (req: Request): Promise<Response> => {
 };
 
 // Check user message acceptance status.
-export const GET = async (req: Request): Promise<Response> => {
+export const GET = async (): Promise<Response> => {
   // Connect to db.
   await dbConnect();
 

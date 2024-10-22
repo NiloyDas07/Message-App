@@ -5,7 +5,6 @@ import dbConnect from "@/lib/dbConnect";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmailNodemailer";
 
 import User from "@/models/User.model";
-import { ApiResponseInterface } from "@/types/apiResponse";
 
 export const POST = async (req: Request): Promise<Response> => {
   // Connect to db.

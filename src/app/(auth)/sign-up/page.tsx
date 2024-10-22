@@ -27,7 +27,7 @@ import { Loader2, MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-const page = () => {
+const SignUp = () => {
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
@@ -107,7 +107,7 @@ const page = () => {
       console.error("Sign Up error: ", error);
       const axiosError = error as AxiosError<ApiResponseInterface>;
 
-      let errorMessage =
+      const errorMessage =
         axiosError.response?.data.message ?? "Error signing up.";
 
       toast({
@@ -255,4 +255,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignUp;

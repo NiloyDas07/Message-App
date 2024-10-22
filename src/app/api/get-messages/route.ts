@@ -5,7 +5,7 @@ import { User } from "next-auth";
 
 import UserModel from "@/models/User.model";
 
-export const GET = async (req: Request): Promise<Response> => {
+export const GET = async (): Promise<Response> => {
   // Connect to db.
   await dbConnect();
 

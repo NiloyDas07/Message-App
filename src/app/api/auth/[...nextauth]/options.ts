@@ -29,7 +29,7 @@ export const authOptions: NextAuthConfig = {
           type: "password",
         },
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials) {
         try {
           const response = await axios.post(
             `${process.env.NEXTAUTH_URL}/api/sign-in`,

@@ -119,7 +119,7 @@ const Dashboard = () => {
 
     fetchMessages();
     fetchIsAcceptingMessages();
-  }, [session, setValue, fetchMessages, fetchIsAcceptingMessages]);
+  }, [session, setValue, fetchMessages, fetchIsAcceptingMessages, router]);
 
   // Function to handle isAccepting switch change.
   const handleAcceptMessageChange = async () => {

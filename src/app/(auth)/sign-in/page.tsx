@@ -24,7 +24,7 @@ import { signInSchema } from "@/schemas/signIn.schema";
 import { signIn } from "next-auth/react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-const page = () => {
+const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
@@ -167,4 +167,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignIn;
