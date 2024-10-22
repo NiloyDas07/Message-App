@@ -83,15 +83,19 @@ const SendMessage = () => {
       }
     };
     checkUserExists();
-  }, [username]);
+  }, [username, router, toast]);
 
   // Latest suggested messages.
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
 
   type Reducer<S, A> = (state: S, action: A) => S;
+  type PreviousMessagesAction = { type: "add"; payload: string[] };
 
   // Reducer function to update previously suggested messages and keep length <= 30.
-  const previousMessagesReducer = (state: string[], action: any) => {
+  const previousMessagesReducer: Reducer<string[], PreviousMessagesAction> = (
+    state: string[],
+    action: PreviousMessagesAction
+  ) => {
     switch (action.type) {
       case "add":
         const totalLength = action.payload.length + state.length;
@@ -107,7 +111,7 @@ const SendMessage = () => {
 
   // The last 10 sets of suggested messages.
   const [previousMessages, dispatchPreviousMessages] = useReducer<
-    Reducer<string[], any>
+    Reducer<string[], PreviousMessagesAction>
   >(previousMessagesReducer, initialMessageString.split(messagesSeparator));
 
   // Using useCompletion hook provided by ai/react to fetch the suggested messages.
