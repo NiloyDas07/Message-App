@@ -24,7 +24,7 @@ type Message = {
   createdAt: Date;
 };
 
-const page = () => {
+const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -180,7 +180,7 @@ const page = () => {
       {/* Copy to clipboard */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2">
-          Copy profile URL to clipboard
+          Share your profile URL with your friends to recieve messages:
         </h2>{" "}
         <div className="flex items-center">
           <input
@@ -243,4 +243,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Dashboard;

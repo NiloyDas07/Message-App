@@ -1,10 +1,9 @@
 import { CredentialsSignin, NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import bcrypt from "bcryptjs";
-
 import dbConnect from "@/lib/dbConnect";
-import User from "@/models/User.model";
+
+import axios, { AxiosError } from "axios";
 
 // Custom Error Message
 class InvalidCredentialsError extends CredentialsSignin {
@@ -37,38 +36,25 @@ export const authOptions: NextAuthConfig = {
         await dbConnect();
 
         try {
-          // Check if user account exists.
-          console.log("credentials: ", credentials);
-          const user = await User.findOne({
-            $or: [
-              { email: credentials?.identifier },
-              { username: credentials?.identifier },
-            ],
-          });
-
-          // If user not found.
-          if (!user) {
-            throw new InvalidCredentialsError();
-          }
-
-          // If user is not verified.
-          if (!user.isVerified) {
-            throw new Error("Please verify your email to login.");
-          }
-
-          const isPasswordMatch = await bcrypt.compare(
-            credentials.password,
-            user.password
+          const response = await axios.post(
+            `${process.env.NEXTAUTH_URL}/api/sign-in`,
+            {
+              identifier: credentials?.identifier,
+              password: credentials?.password,
+            }
           );
 
-          if (!isPasswordMatch) {
+          return response.data?.user;
+        } catch (error) {
+          const axiosError = error as AxiosError;
+
+          if (axiosError.response?.status === 401) {
             throw new InvalidCredentialsError();
           }
 
-          return user;
-        } catch (error) {
-          console.log("error: ", error);
-          throw new InvalidCredentialsError();
+          console.error("Sign In Error: ", error);
+
+          throw new Error("Failed to sign in.");
         }
       },
     }),

@@ -61,6 +61,11 @@ export const GET = async (req: Request): Promise<Response> => {
                 sender: "$senderDetails.username",
               },
             },
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
           ],
         },
       },
