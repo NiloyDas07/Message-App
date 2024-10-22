@@ -19,6 +19,7 @@ export const sendVerificationEmail = async (
   verifyCode: string
 ): Promise<ApiResponseInterface> => {
   try {
+    console.log("Sending verification email to: ", email);
     const { renderToStaticMarkup } = await import("react-dom/server");
     // Render the React component to an HTML string
     const emailHtml = renderToStaticMarkup(
@@ -32,6 +33,11 @@ export const sendVerificationEmail = async (
       subject: "Verification Email",
       html: emailHtml,
     });
+
+    if (!info.messageId) {
+      console.error("Error sending verification email: ", info);
+      return { success: false, message: "Error sending verification email" };
+    }
 
     console.log("Message sent: %s", info.messageId);
     return { success: true, message: "Verification email sent" };
