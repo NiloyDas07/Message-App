@@ -1,8 +1,6 @@
 import { CredentialsSignin, NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import dbConnect from "@/lib/dbConnect";
-
 import axios, { AxiosError } from "axios";
 
 // Custom Error Message
@@ -32,9 +30,6 @@ export const authOptions: NextAuthConfig = {
         },
       },
       async authorize(credentials: any): Promise<any> {
-        // Connect to db.
-        await dbConnect();
-
         try {
           const response = await axios.post(
             `${process.env.NEXTAUTH_URL}/api/sign-in`,
