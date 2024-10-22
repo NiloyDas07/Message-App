@@ -30,7 +30,6 @@ export const authOptions: NextAuthConfig = {
         },
       },
       async authorize(credentials) {
-        console.log("Entered authorize.");
         try {
           const response = await axios.post(
             `${process.env.NEXTAUTH_URL}/api/sign-in`,
@@ -39,8 +38,6 @@ export const authOptions: NextAuthConfig = {
               password: credentials?.password,
             }
           );
-
-          console.log("response: ", response);
 
           if (!response.data?.user) {
             throw new InvalidCredentialsError();
