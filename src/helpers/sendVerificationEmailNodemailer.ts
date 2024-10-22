@@ -27,7 +27,7 @@ export const sendVerificationEmail = async (
 
     // Send mail with defined transport object
     const info = await transporter.sendMail({
-      from: '"Acme" <noreply@yourdomain.com>',
+      from: '"Acme" <SimpleChat>',
       to: email,
       subject: "Verification Email",
       html: emailHtml,
