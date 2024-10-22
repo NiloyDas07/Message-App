@@ -53,24 +53,15 @@ const SendMessage = () => {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
-  // Function to check if user exists and redirect to dashboard if not.
-  const checkUserExists = async () => {
-    try {
-      const user = await axios.get(`/api/get-user-by-username/`, {
-        params: { username },
-      });
-
-      if (!user || user.data.success === false) {
-        toast({
-          title: "User Not Found",
-          description: "User not found. Redirecting to home.",
-          variant: "destructive",
+  useEffect(() => {
+    // Function to check if user exists and redirect to dashboard if not.
+    const checkUserExists = async () => {
+      try {
+        const user = await axios.get(`/api/get-user-by-username/`, {
+          params: { username },
         });
-        router.replace("/");
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 404) {
+
+        if (!user || user.data.success === false) {
           toast({
             title: "User Not Found",
             description: "User not found. Redirecting to home.",
@@ -78,13 +69,21 @@ const SendMessage = () => {
           });
           router.replace("/");
         }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 404) {
+            toast({
+              title: "User Not Found",
+              description: "User not found. Redirecting to home.",
+              variant: "destructive",
+            });
+            router.replace("/");
+          }
+        }
       }
-    }
-  };
-
-  useEffect(() => {
+    };
     checkUserExists();
-  }, [username, checkUserExists]);
+  }, [username]);
 
   // Latest suggested messages.
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
@@ -131,7 +130,7 @@ const SendMessage = () => {
     const messages = parseStringMessages(completion);
     setSuggestedMessages(messages);
     dispatchPreviousMessages({ type: "add", payload: messages });
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

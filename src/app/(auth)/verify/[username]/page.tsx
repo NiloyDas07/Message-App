@@ -50,7 +50,7 @@ const VerifyAccount = () => {
     } catch (error) {
       console.log("Error verifying account: ", error);
       const axiosError = error as AxiosError<ApiResponseInterface>;
-      let errorMessage =
+      const errorMessage =
         axiosError.response?.data.message ?? "Error verifying account.";
 
       toast({
