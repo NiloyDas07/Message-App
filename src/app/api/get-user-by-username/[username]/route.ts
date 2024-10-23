@@ -1,11 +1,13 @@
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User.model";
 
-export const GET = async (req: Request): Promise<Response> => {
+export const GET = async (
+  req: Request,
+  { params }: { params: { username: string } }
+): Promise<Response> => {
   try {
     // Get username from params.
-    const { searchParams } = new URL(req.url);
-    const username = searchParams.get("username");
+    const { username } = params;
 
     // Connect to db.
     await dbConnect();

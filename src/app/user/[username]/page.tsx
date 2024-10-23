@@ -57,9 +57,7 @@ const SendMessage = () => {
     // Function to check if user exists and redirect to dashboard if not.
     const checkUserExists = async () => {
       try {
-        const user = await axios.get(`/api/get-user-by-username/`, {
-          params: { username },
-        });
+        const user = await axios.get(`/api/get-user-by-username/${username}`);
 
         if (!user || user.data.success === false) {
           toast({

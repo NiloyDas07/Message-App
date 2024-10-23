@@ -8,9 +8,6 @@ export const POST = async (req: Request): Promise<Response> => {
   try {
     const { username, verifyCode } = await req.json();
 
-    console.log("username: ", username);
-    console.log("verifyCode: ", verifyCode);
-
     // Find user by username.
     const user = await User.findOne({ username });
 
