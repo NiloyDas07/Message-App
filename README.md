@@ -2,6 +2,9 @@
 
 A very simple chat application built with **[Next.js](https://nextjs.org/)**, **[React](https://react.dev/)**, and **[MongoDB](https://www.mongodb.com/)**. Uses AI(llama) for generating message suggestions.
 
+- [Live Site - https://simplechat-rosy-chi.vercel.app/](https://simplechat-rosy-chi.vercel.app/)
+- [GitHub](https://github.com/NiloyDas07/Message-App)
+
 ## Table of Contents
 
 - [Features](#features)
